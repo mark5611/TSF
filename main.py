@@ -4,7 +4,6 @@ import time
 
 import requests
 from bs4 import BeautifulSoup
-from ddgs import DDGS
 
 found_links = {}
 with open("./links.txt", "r") as f:
