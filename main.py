@@ -6,33 +6,15 @@ import requests
 from bs4 import BeautifulSoup
 from ddgs import DDGS
 
-targets = {"Avanti" : "AVANTI - Förthofer Donaulände 8", "Eni" : "eni24 3500 krems", "avanti2" : "AVANTI - 3500 krems"}
+found_links = {}
+with open("./links.txt", "r") as f:
+    data = f.readlines()
+    for line in data:
+        splitLine = line.strip().split(" ")
+        found_links[splitLine[0]] = splitLine[1]
 
-class Crawler():
-    def __init__(self, targets):
-        self.targets = targets
-        self.targetUrls = {}
-
-    def search(self):
-        try:
-            for name, target in self.targets.items():
-                results = DDGS().text(
-                    f'"benzinpreis blitz" {target}',
-                    region="at-de",
-                    max_results=1)
-
-                needed = results[0]["href"]
-                if needed != '':
-                    self.targetUrls[name] = needed
-                else:
-                    self.search()
-        except:
-            print("\n-RETRY-\n\n")
-            self.search()
-
-    def provideResult(self):
-        self.search()
-        return self.targetUrls
+with open("stationPricePairs.jsonl", "w") as f:
+    f.write("")
 
 class Station():
     def __init__(self, url, name):
@@ -67,12 +49,13 @@ class Station():
             print(f"{fuel}: {price}€")
         print()
 
-
-
-newCrawler = Crawler(targets)
-found_links = newCrawler.provideResult()
+    def writeResults(self):
+        with open("stationPricePairs.jsonl", "a", encoding="utf-8") as f:
+            json.dump({self.name: self.prices}, f, ensure_ascii=False)
+            f.write("\n")
 
 
 for station, url in found_links.items():
     newStation = Station(url, station)
     newStation.printResults()
+    newStation.writeResults()
