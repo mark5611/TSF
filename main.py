@@ -12,8 +12,7 @@ with open("./links.txt", "r") as f:
         splitLine = line.strip().split(" ")
         found_links[splitLine[0]] = splitLine[1]
 
-with open("stationPricePairs.jsonl", "w") as f:
-    f.write("")
+final_pairs = {}
 
 class Station():
     def __init__(self, url, name):
@@ -49,12 +48,13 @@ class Station():
         print()
 
     def writeResults(self):
-        with open("stationPricePairs.jsonl", "a", encoding="utf-8") as f:
-            json.dump({self.name: self.prices}, f, ensure_ascii=False)
-            f.write("\n")
+        final_pairs[self.name] = self.prices
 
 
 for station, url in found_links.items():
     newStation = Station(url, station)
     newStation.printResults()
     newStation.writeResults()
+
+with open("./stationPrices.json", "w") as f:
+    json.dump(final_pairs, f, ensure_ascii=False, indent=2)
