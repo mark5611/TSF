@@ -1,4 +1,7 @@
+import json
 import re
+import time
+
 import requests
 from bs4 import BeautifulSoup
 from ddgs import DDGS
@@ -24,7 +27,7 @@ class Crawler():
                 else:
                     self.search()
         except:
-            print("\n\n-RETRY-\n\n")
+            print("\n-RETRY-\n\n")
             self.search()
 
     def provideResult(self):
@@ -35,28 +38,35 @@ class Station():
     def __init__(self, url, name):
         self.url = url
         self.name = name
-        self.e10 = "N/A"
-        self.diesel = "N/A"
+        self.prices = {}
         self.selectedResponse = []
 
     def getResponse(self, url):
-        while self.selectedResponse == []:
-            resp = requests.get(url)
-            sp = BeautifulSoup(resp.content, 'html.parser')
-            self.selectedResponse = sp.find_all("div", class_="preis_gross")
-            print(self.selectedResponse)
+        pattern = re.compile(r"^(?P<name>.+?)(?P<price>\d,\d+)\s*€")
 
-    def parseE10(self):
-        self.e10 = str(self.selectedResponse[1]).split(">")[1].split("<")[0]
+        for attempt in range(3):
+            resp = requests.get(url, timeout=10)
+            resp.raise_for_status()
+            sp = BeautifulSoup(resp.content, "html.parser")
+            selectedResponse = sp.find_all("div", class_="preis_gross")
+            if selectedResponse:
+                for div in selectedResponse:
+                    m = pattern.match(div.get_text(strip=True))
+                    if m:
+                        self.prices[m["name"].strip()] = float(m["price"].replace(",", "."))
+                break
+            time.sleep(2)
+        else:
+            print(f"No prices found for {self.name}")
 
-    def parseDiesel(self):
-        self.diesel = str(self.selectedResponse[0]).split(">")[1].split("<")[0]
 
     def printResults(self):
         self.getResponse(self.url)
-        self.parseE10()
-        self.parseDiesel()
-        print(f"{self.name}\n----------\nE10: €{self.e10}\nDiesel: €{self.diesel}\n")
+        print(f"{self.name}\n----------")
+        for fuel, price in self.prices.items():
+            print(f"{fuel}: {price}€")
+        print()
+
 
 
 newCrawler = Crawler(targets)
