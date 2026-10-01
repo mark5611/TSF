@@ -14,9 +14,9 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install requests beautifulsoup4
-      - run: python scrape.py
+      - run: python main.py
       - run: |
           git config user.name "bot"
           git config user.email "bot@users.noreply.github.com"
-          git add prices.json
+          git add stationPricePairs.jsonl
           git diff --cached --quiet || (git commit -m "update prices" && git push)
