@@ -1,16 +1,16 @@
 {
   "Avanti": {
     "Diesel": 2.123,
-    "Super E10": 1.778
+    "Super E10": 1.774
   },
   "Eni": {
     "Diesel": 2.123,
-    "Super E10": 1.782
+    "Super E10": 1.774
   },
   "SHELL": {
     "Diesel": 2.144,
     "Premium Diesel": 2.409,
-    "Super 100+": 1.992,
-    "Super E10": 1.802
+    "Super 100+": 1.988,
+    "Super E10": 1.798
   }
 }
