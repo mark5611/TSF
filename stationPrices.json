@@ -4,11 +4,13 @@
     "Super E10": 1.589
   },
   "Eni": {
-    "Diesel": 1.984,
-    "Super E10": 1.584
+    "Diesel": 1.958,
+    "Super E10": 1.56
   },
   "SHELL": {
-    "Premium Diesel": 2.207,
-    "Super 100+": 1.733
+    "Diesel": 1.964,
+    "Premium Diesel": 2.229,
+    "Super 100+": 1.754,
+    "Super E10": 1.564
   }
 }
